@@ -96,7 +96,7 @@ var keyFilter = $.widget('aw.keyFilter', {
 					} else if (filter === $.aw.keyFilter.ESCAPE) {
 						if (isEscape(event)) return true;
 					} else if ($.isFunction(filter)) {
-						if (filter.call(this.element[0], event)) return true;
+						if (filter.call(this.element[0], event) === true) return true;
 					} else if (filter in this.options.filters) {
 							// CONSIDER: might only need to do event.keyCode here
 							if (typeof c === "undefined") c = String.fromCharCode(event.which || event.keyCode);

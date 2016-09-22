@@ -11,12 +11,12 @@
 }(function( $ ) {
 
 /*!
- * jQuery UI KeyFilter 0.9.0
+ * jQuery UI KeyFilter 0.9.1
  * https://github.com/borgboyone/jquery-ui-keyfilter
  *
  * Copyright 2016 Anthony Wells
  * Released under the MIT license.
- * https://raw.githubusercontent.com/borgboyone/jquery-ui-showmore/master/LICENSE
+ * https://raw.githubusercontent.com/borgboyone/jquery-ui-keyfilter/master/LICENSE
  *
  * http://borgboyone.github.io/jquery-ui-keyfilter/
  */
@@ -49,11 +49,6 @@ function isEnter(e) {
 		}
 	})(keyCodeName);
 }*/
-/*function isPunctuation(e) {
-	var k = e.which || e.keyCode;
-	// FIXME: this is incomplete,,.,",',?,!,:,;,-,?,(,)
-	return (k && ([$.ui.keyCode.COMMA, $.ui.keyCode.PERIOD].indexOf(k) !== -1));
-}*/
 function isNonPrintable(e) {
 	return isModifier(e) || isCursor(e) || isEdit(e) || isEscape(e) || isEnter(e);
 }
@@ -61,13 +56,13 @@ function isNonPrintable(e) {
 // TODO: Add support for iPhone k = 127 (escape)
 // TODO: Add support for Android anomalies
 // TODO: Add support for paste events
-// TODO: validate options order and filters on create and option update
+// TODO: validate options order and filters on create and option update (_getCreateOptions)
 var keyFilter = $.widget('aw.keyFilter', {
-	version: '0.9.0',
+	version: '0.9.1',
 	options: {
 		allow: '*',
 		deny: 'none',
-		order: 'allow,deny',
+		order: 'allow,deny', // 'allow,deny', 'deny,allow', 'allow', 'deny'
 		filters: {}
 	},
 	_create: function() {
@@ -103,13 +98,10 @@ var keyFilter = $.widget('aw.keyFilter', {
 					} else if ($.isFunction(filter)) {
 						if (filter.call(this.element[0], event)) return true;
 					} else if (filter in this.options.filters) {
-							// might only need to do event.keyCode here
-							// we should only do this once but only if we enter this code
+							// CONSIDER: might only need to do event.keyCode here
 							if (typeof c === "undefined") c = String.fromCharCode(event.which || event.keyCode);
 							if (this.regexps[filter].exec(c) !== null) return true;
-					}
-					// TODO: Should we Error on unknown filter name?
-					/* else throw new Error("Unknown filter name '" + filter + '.");*/
+					} else throw new Error("Unknown filter name '" + filter + "'.");
 				}
 				return undefined;
 			}
